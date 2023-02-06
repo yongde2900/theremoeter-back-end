@@ -3,6 +3,9 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const { initializeApp, applicationDefault, cert } = require('firebase-admin/app');
+const { getFirestore, Timestamp, FieldValue } = require('firebase-admin/firestore');
+const serviceAccount = require('./trunk-raspberry-pi-tah-firebase-adminsdk-pxjji-d8f129d255.json');
 
 var indexRouter = require('./routes/index');
 const apiRouter = require('./routes/api')
@@ -37,5 +40,12 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+//firebase setting
+initializeApp({
+  credential: cert(serviceAccount)
+});
+
+
 
 module.exports = app;
