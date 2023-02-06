@@ -17,7 +17,7 @@ module.exports = async () => {
             const timestamp = Math.floor(dateTime / 1000);
             const data = JSON.parse(payload)
             data.timestamp = timestamp
-            const res = await db.collection('main').add({ data })
+            const res = await db.collection('main').add(data)
             console.log('Added document with ID: ', res.id,data)
         })
     })
