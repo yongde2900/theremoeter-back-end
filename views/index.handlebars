@@ -1,0 +1,20 @@
+<html> 
+    <head></head>
+
+    <body onload="current_time()" ondlaod="ff1()">
+            <h1 class="temp">temperature1:{{ji}}</h1>
+            <h1 class="humi">humidity:{{jo}}</h1>
+	<div id="current">time=</div>
+    <script  > 
+      
+    </script>
+    </body>
+   
+</html>
+ <script>
+       function current_time(){
+　      document.getElementById('current').innerHTML = new Date();
+　 //每秒呼叫一次功能: current_time()
+        setTimeout('current_time()',1000);
+}
+    </script>

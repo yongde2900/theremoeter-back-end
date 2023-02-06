@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1 class="temp"><span id ='T'>溫度=</span></h1>
+    <h1 class="humi"><span id ='H'>濕度=</span></h1>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mqtt/4.3.7/mqtt.js" integrity="sha512-yX4jaiU9Ai9dzaimFoTq+tQYOrAMNP+EWiiUVsru3ypsAi76c0zCPBfxKagLkKjC4ZeLMEQTa7aE7CtjTmlgDA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="module">
+        // connect to broker with websocket
+        let option = {
+            username: 'user',
+            password: '123456'
+        }
+    
+     
+        let client = mqtt.connect('ws://192.168.168.169:1884', option)
+        client.on('connect', () => {
+            console.log('connected')
+            client.subscribe('climate/data')
+            client.on('message', (topic, payload) => {
+                const T  =JSON.parse(payload).temperature
+                const H  =JSON.parse(payload).humidity
+                console.log(T,H)
+                document.getElementById('T').innerHTML=`溫度=${T}`
+                document.getElementById('H').innerHTML=`濕度=${H}`
+
+            })
+        })
+    </script>
+
+
+    </body>
+</html>
