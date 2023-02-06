@@ -3,7 +3,8 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-const serviceAccount = require('./trunk-raspberry-pi-tah-firebase-adminsdk-pxjji-d8f129d255.json');
+// const subscriber = require('./subscriber')()
+const db = require('./config/db')()
 
 var indexRouter = require('./routes/index');
 const apiRouter = require('./routes/api')
