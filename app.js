@@ -26,6 +26,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/api', apiRouter)
 
+
+app.use(express.static("./views/"));
+
+app.get('/', (req, res) => {
+  res.render('index')
+});//主頁面
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
