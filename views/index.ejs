@@ -20,13 +20,10 @@
             width: 150px !important;
             height: 60px !important;
         }
-        .ck{
-            position: relative;
-            left: 20px;
-        }
+       
         .col {
-            width: 70% !important;
-            height: 100% !important;
+            width: 80% !important;
+            height: 90% !important;
         }
 
         canvas {
@@ -104,18 +101,18 @@
     <span id="current">
 
          </span>
-         <button class="ck" onclick="addd()">try</button>
+         <!-- <button class="ck" onclick="addd()">try</button> -->
          
 
     <!-- <button onclick="addd()">try</button> -->
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
         var ctx = document.getElementById("myChart")
         var ctx1 = document.getElementById("myChart1")
-
         const labels = ['溫度']
-        var config = new Chart(ctx, {
+        var chartdata={
             type: 'bar',
             data: {
                 labels: labels,
@@ -138,8 +135,9 @@
                     }
                 }
             },
-        })
-        var config2 = new Chart(ctx1, {
+        }
+        var config = new Chart(ctx,chartdata )
+        var chartdata2={
             type: 'bar',
             data: {
                 labels: ["濕度"],
@@ -164,32 +162,10 @@
 
                 }
             },
-        })
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mqtt/4.3.7/mqtt.js"
-        integrity="sha512-yX4jaiU9Ai9dzaimFoTq+tQYOrAMNP+EWiiUVsru3ypsAi76c0zCPBfxKagLkKjC4ZeLMEQTa7aE7CtjTmlgDA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script type="module">
-        // connect to broker with websocket
-        let option = {
-            username: 'user',
-            password: '123456'
         }
-        let client = mqtt.connect('ws://192.168.168.169:1884', option)
-        client.on('connect', () => {
-            console.log('connected')
-            const el = document.getElementById("temp");
-            console.log(el)
-            client.subscribe('climate/data')
-            client.on('message', (topic, payload) => {
-                const T = JSON.parse(payload).temperature
-                const H = JSON.parse(payload).humidity
-                console.log(T, H)
-                document.getElementById('T').innerHTML = `溫度=${T}`
-                document.getElementById('H').innerHTML = `濕度=${H}`
-            })
-        })
+        var config2 = new Chart(ctx1,chartdata2 )
     </script>
+    
     <script>
 
         function addd() {
@@ -216,6 +192,43 @@
             setTimeout("current_time()", 1000); //每秒呼叫一次功能:
         }
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mqtt/4.3.7/mqtt.js"
+    integrity="sha512-yX4jaiU9Ai9dzaimFoTq+tQYOrAMNP+EWiiUVsru3ypsAi76c0zCPBfxKagLkKjC4ZeLMEQTa7aE7CtjTmlgDA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="module">
+    // connect to broker with websocket
+    let option = {
+        username: 'user',
+        password: '123456'
+    }
+    let client = mqtt.connect('ws://192.168.168.169:1884', option)
+    client.on('connect', () => {
+        console.log('connected')
+        const el = document.getElementById("temp");
+        console.log(el)
+        client.subscribe('climate/data')
+        client.on('message', (topic, payload) => {
+            const T = JSON.parse(payload).temperature
+            const H = JSON.parse(payload).humidity
+            console.log(T, H)
+            document.getElementById('temp').innerHTML = `溫度=${T}`
+            document.getElementById('humi').innerHTML = `濕度=${H}`
+            const el = document.getElementById("temp");
+            const el1 = document.getElementById("humi");
+            el.style.animation = "breath 1s "
+            el1.style.animation = "breath 1s "
+            chartdata.data.datasets[0].data[0]=`${T}`
+            chartdata2.data.datasets[0].data[0]=`${H}`
+            config.update();
+            config2.update();
+            el.addEventListener("animationend", () => {
+                el.style.animation = "none"
+                el1.style.animation = "none"
+                // console.log("hi here")
+            })
+        })
+    })
+</script>
 </body>
 
 </html>

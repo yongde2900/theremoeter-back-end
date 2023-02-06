@@ -22,6 +22,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
+
+app.use(express.static("./views/"));
+
+app.get('/', (req, res) => {
+  res.render('index')
+});//主頁面
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
@@ -36,6 +42,10 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
+});
+
+app.listen(3002, () => {
+  console.log('server is work')
 });
 
 module.exports = app;
