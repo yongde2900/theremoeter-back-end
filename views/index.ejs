@@ -10,20 +10,26 @@
         integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <!-- <link rel="stylesheet" href="/style.css"> -->
     <style>
-        .container{
+        .container {
             height: 100% !important;
-            width: 100%!important;
+            width: 100% !important;
         }
+
         .p-3 {
             position: relative;
-            left:20px;
+            left: 20px;
             width: 150px !important;
             height: 60px !important;
         }
-       
+
         .col {
             width: 80% !important;
             height: 90% !important;
+        }
+
+        .myChartLine {
+            position: relative;
+            text-align: center;
         }
 
         canvas {
@@ -37,7 +43,8 @@
 
             display: flex;
             position: relative;
-
+            text-align: center;
+            margin-left: 25%;
             width: 50%;
             height: 70%;
         }
@@ -79,7 +86,6 @@
             }
         }
     </style>
-
 </head>
 
 <body onload="current_time();">
@@ -95,24 +101,24 @@
             </div>
         </div>
         <!-- <div class="chart-wrapper"> -->
-        </div>
     </div>
     </div>
+    </div>
+    <div class="chart-wrapper">
+        <canvas id="myChartLine">
+        </canvas>
+    </div>
+    <button onclick="addd();">try </button>
     <span id="current">
+    </span>
 
-         </span>
-         <!-- <button class="ck" onclick="addd()">try</button> -->
-         
-
-    <!-- <button onclick="addd()">try</button> -->
-    <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <script>
         var ctx = document.getElementById("myChart")
         var ctx1 = document.getElementById("myChart1")
+        var ctxLine = document.getElementById("myChartLine")
         const labels = ['溫度']
-        var chartdata={
+        var chartdata = {
             type: 'bar',
             data: {
                 labels: labels,
@@ -136,8 +142,8 @@
                 }
             },
         }
-        var config = new Chart(ctx,chartdata )
-        var chartdata2={
+        var config = new Chart(ctx, chartdata)
+        var chartdata2 = {
             type: 'bar',
             data: {
                 labels: ["濕度"],
@@ -154,81 +160,129 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-
                 scales: {
                     y: {
                         suggestedMax: 30,
                     }
-
                 }
             },
         }
-        var config2 = new Chart(ctx1,chartdata2 )
+        var config2 = new Chart(ctx1, chartdata2)
+        var LineChartData = {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                datasets: [{
+                    label: ['平均溫度'],
+                    data: [20, 22.3, 25, 26, 28, 31.2, 33],
+                    fill: false,
+                    borderColor: 'rgb(75, 192, 192)',
+                }, {
+                    label: '平均濕度',
+                    data: [10, 30, 15, 36, 18, 12.2, 33],
+                }]
+            },
+        }
+        var myChart = new Chart(ctxLine, LineChartData);
     </script>
-    
     <script>
-
         function addd() {
+            i = 0;
             const el = document.getElementById("temp");
             const el1 = document.getElementById("humi");
             el.style.animation = "breath 1s "
             el1.style.animation = "breath 1s "
-
             el.addEventListener("animationend", () => {
                 el.style.animation = "none"
                 el1.style.animation = "none"
-
                 console.log("hi here")
             })
 
-            // el.style.animation("animation");
+            var time = new Date()
+            ST = time.getSeconds()
+            ST = ST.toString();
+
+            MT = time.getMinutes()
+            MT = MT.toString()
+            timeA = [];
+            if (timeA.length < 7) {
+                timeA.push(MT + ":" + ST);
+                myChart.update();
+                console.log("hi")
+
+            } else if (timeA.length === 7) {
+                for (let i = 0; i < timeA.length - 1; i++) {
+                    timeA[i] = timeA[i + 1]
+                    LineChartData.data.labels[i] = timeA[i];
+                }
+                timeA[6] = MT + ":" + ST
+                myChart.update();
+
+            }
+
+
 
         }
     </script>
     <script>
-
         function current_time() {
             document.getElementById("current").innerHTML = new Date();
             setTimeout("current_time()", 1000); //每秒呼叫一次功能:
         }
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mqtt/4.3.7/mqtt.js"
-    integrity="sha512-yX4jaiU9Ai9dzaimFoTq+tQYOrAMNP+EWiiUVsru3ypsAi76c0zCPBfxKagLkKjC4ZeLMEQTa7aE7CtjTmlgDA=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script type="module">
-    // connect to broker with websocket
-    let option = {
-        username: 'user',
-        password: '123456'
-    }
-    let client = mqtt.connect('ws://192.168.168.169:1884', option)
-    client.on('connect', () => {
-        console.log('connected')
-        const el = document.getElementById("temp");
-        console.log(el)
-        client.subscribe('climate/data')
-        client.on('message', (topic, payload) => {
-            const T = JSON.parse(payload).temperature
-            const H = JSON.parse(payload).humidity
-            console.log(T, H)
-            document.getElementById('temp').innerHTML = `溫度=${T}`
-            document.getElementById('humi').innerHTML = `濕度=${H}`
+        integrity="sha512-yX4jaiU9Ai9dzaimFoTq+tQYOrAMNP+EWiiUVsru3ypsAi76c0zCPBfxKagLkKjC4ZeLMEQTa7aE7CtjTmlgDA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="module">
+        // connect to broker with websocket
+        let option = {
+            username: 'user',
+            password: '123456'
+        }
+        let client = mqtt.connect('ws://192.168.168.169:1884', option)
+        client.on('connect', () => {
+            console.log('connected')
             const el = document.getElementById("temp");
-            const el1 = document.getElementById("humi");
-            el.style.animation = "breath 1s "
-            el1.style.animation = "breath 1s "
-            chartdata.data.datasets[0].data[0]=`${T}`
-            chartdata2.data.datasets[0].data[0]=`${H}`
-            config.update();
-            config2.update();
-            el.addEventListener("animationend", () => {
-                el.style.animation = "none"
-                el1.style.animation = "none"
-                // console.log("hi here")
+            client.subscribe('climate/data')
+            client.on('message', (topic, payload) => {
+                const T = JSON.parse(payload).temperature;
+                const H = JSON.parse(payload).humidity;
+                document.getElementById('temp').innerHTML = `溫度=${T}`;
+                document.getElementById('humi').innerHTML = `濕度=${H}`;
+                const el = document.getElementById("temp");
+                const el1 = document.getElementById("humi");
+                el.style.animation = "breath 1s ";
+                el1.style.animation = "breath 1s ";
+                chartdata.data.datasets[0].data[0] = `${T}`;
+                chartdata2.data.datasets[0].data[0] = `${H}`;
+                for (let i = 0; i < LineChartData.data.datasets[0].data.length - 1; i++) {
+                    LineChartData.data.labels[i]=LineChartData.data.labels[i+1];
+                    LineChartData.data.datasets[0].data[i] = LineChartData.data.datasets[0].data[i + 1];
+                    LineChartData.data.datasets[1].data[i] = LineChartData.data.datasets[1].data[i + 1];
+                    myChart.update();
+                }
+                let ST = new Date().getSeconds()
+                ST = ST.toString();
+                let MT = new Date().getMinutes()
+                MT = MT.toString()
+                let HT=new Date().getUTCHours()+8;
+                HT=HT.toString();
+                LineChartData.data.labels[6]=(`${HT}:${MT}:${ST}`)
+                LineChartData.data.datasets[0].data[6] = `${T}`;
+                LineChartData.data.datasets[1].data[6] = `${H}`;
+                myChart.update();
+                config.update();
+                config2.update();
+               
+                
+                el.addEventListener("animationend", () => {
+                    el.style.animation = "none"
+                    el1.style.animation = "none"
+                    // console.log("hi here")
+                })
             })
         })
-    })
-</script>
+    </script>
 </body>
 
 </html>

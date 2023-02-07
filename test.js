@@ -1,0 +1,5 @@
+var time=new Date()
+let HT=time.getHours()
+let MT=time.getMinutes()
+HT=HT.toString()
+console.log(typeof(HT))
