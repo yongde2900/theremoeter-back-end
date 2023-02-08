@@ -10,24 +10,21 @@ const option = {
 }
 
 // get the real time data from broker
-router.get('/data', (req, res) => {
-  let client = mqtt.connect('ws://192.168.168.169:1884', option)
-  client.on('connect', () => {
-    console.log('connected')
-    client.subscribe('climate/data')
-    client.on('message', (topic, payload) => {
-      const data = JSON.parse(payload)
-      res.json(data)
-      client.end()
-    })
+router.get('/data', async(req, res) => {
+  const main = db.collection('main').orderBy('timestamp','desc').limit(1)
+  const snapshot = await main.get()
+  let datas = []
+  snapshot.forEach(doc => {
+    datas.push(doc.data())
   })
+  res.json(datas[0])
 })
 
 //get the  history data from database
 router.get('/datas', async (req, res) => {
-  const limit = (req.query.limit && typeof (req.query.limit) === 'number') ? req.query.limit : 100
-
-  const main = db.collection('main').orderBy('timestamp').limit(limit)
+  let limit = parseInt(req.query.limit)
+  limit = limit ? limit : 10
+  const main = db.collection('main').orderBy('timestamp','desc').limit(limit)
   const snapshot = await main.get()
   let datas = []
   snapshot.forEach(doc => {
