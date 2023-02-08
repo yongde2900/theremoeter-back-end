@@ -5,11 +5,22 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%=title%></title>
+    <title>
+        <%=title%>
+    </title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <!-- <link rel="stylesheet" href="/style.css"> -->
     <style>
+        .container video {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            object-fit: cover;
+        }
+
         .container {
             height: 100% !important;
             width: 100% !important;
@@ -27,10 +38,10 @@
             height: 90% !important;
         }
 
-        .myChartLine {
+        /* .myChartLine {
             position: relative;
             text-align: center;
-        }
+        } */
 
         canvas {
             position: relative;
@@ -42,8 +53,8 @@
         .chart-wrapper {
 
             display: flex;
-            position: relative;
-            text-align: center;
+            /* position: relative; */
+            /* text-align: center; */
             margin-left: 25%;
             width: 50%;
             height: 70%;
@@ -56,11 +67,11 @@
             -webkit-animation: animation;
             animation: animation;
         }
-
+     
         span {
             position: relative;
-            top: 3px;
-            left: 12px;
+            left: 10%;
+            
         }
 
         .animation {
@@ -90,6 +101,11 @@
 
 <body onload="current_time();">
     <div class="container px-4">
+        <video autoplay muted loop>
+            <source
+                src="https://static.videezy.com/system/resources/previews/000/037/438/original/4k-cartoon-funny-spring-country-landscape-seamless-looping.mp4"
+                type="video/mp4">
+        </video>
         <div class="row gx-5">
             <div class="col">
                 <div id="temp" class="p-3 border bg">溫度:</div>
@@ -107,16 +123,20 @@
     <div class="chart-wrapper">
         <canvas id="myChartLine">
         </canvas>
+        <span id="current">        </span>
+
     </div>
-    <button onclick="addd();">try </button>
-    <span id="current">
-    </span>
+    
+    <!-- <button onclick="addd();">try </button> -->
+
+
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         var ctx = document.getElementById("myChart")
         var ctx1 = document.getElementById("myChart1")
         var ctxLine = document.getElementById("myChartLine")
+
         const labels = ['溫度']
         var chartdata = {
             type: 'bar',
@@ -126,9 +146,9 @@
                     label: ['溫度'],
                     data: [20],
                     backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',],
+                        'rgba(255, 99, 132, 0.8)',],
                     borderColor: [
-                        'rgb(255, 159, 64)',],
+                        'rgb(255, 159, 64,1)',],
                     borderWidth: 1,
                 }],
             },
@@ -137,7 +157,21 @@
                 maintainAspectRatio: false,
                 scales: {
                     y: {
+                        grid: {
+                            color: "rgba(0,0,0,0.5)"
+                        },
                         suggestedMax: 30,
+                        ticks: {
+                            color: 'white',
+                            font: {
+                                size: 20,
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: "rgba(0,0,0,0.5)"
+                        },
                     }
                 }
             },
@@ -151,7 +185,7 @@
                     label: ['濕度'],
                     data: [20],
                     backgroundColor: [
-                        'rgba(255, 159, 64, 0.2)'],
+                        'rgba(255, 159, 64, 0.8)'],
                     borderColor: [
                         'rgb(255, 99, 132)'],
                     borderWidth: 1,
@@ -160,9 +194,24 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+
                 scales: {
                     y: {
+                        grid: {
+                            color: "rgba(0,0,0,0.5)"
+                        },
                         suggestedMax: 30,
+                        ticks: {
+                            color: 'white',
+                            font: {
+                                size: 20,
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: "rgba(0,0,0,0.5)"
+                        },
                     }
                 }
             },
@@ -174,19 +223,41 @@
                 labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
                 datasets: [{
                     label: ['平均溫度'],
-                    data: <%-temp%>,
+                    data: [20, 22.3, 25, 26, 28, 31.2, 33],
                     fill: false,
-                    borderColor: 'rgb(75, 192, 192)',
+                    borderColor: 'rgba(75, 192, 192,1)',
                 }, {
                     label: '平均濕度',
                     data: [10, 30, 15, 36, 18, 12.2, 33],
+                    borderColor: [
+                        'rgba(255, 159, 64, 1)'],
                 }]
-            },
+            }, options: {
+                scales: {
+                    y: {
+                        grid: {
+                            color: "rgba(0,0,0,0.5)"
+                        },
+                        suggestedMax: 30,
+                        ticks: {
+                            color: 'white',
+                            font: {
+                                size: 20,
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: "rgba(0,0,0,0.5)"
+                        },
+                    }
+                }
+            }
         }
         var myChart = new Chart(ctxLine, LineChartData);
     </script>
-    
-    <script>
+
+    <!-- <script>
         function addd() {
             i = 0;
             const el = document.getElementById("temp");
@@ -224,10 +295,11 @@
 
 
         }
-    </script>
+    </script> -->
     <script>
         function current_time() {
-            document.getElementById("current").innerHTML = new Date();
+
+            document.getElementById("current").innerHTML = new Date().getHours()+":"+ new Date().getMinutes()+":"+ new Date().getSeconds();
             setTimeout("current_time()", 1000); //每秒呼叫一次功能:
         }
     </script>
@@ -257,7 +329,7 @@
                 chartdata.data.datasets[0].data[0] = `${T}`;
                 chartdata2.data.datasets[0].data[0] = `${H}`;
                 for (let i = 0; i < LineChartData.data.datasets[0].data.length - 1; i++) {
-                    LineChartData.data.labels[i]=LineChartData.data.labels[i+1];
+                    LineChartData.data.labels[i] = LineChartData.data.labels[i + 1];
                     LineChartData.data.datasets[0].data[i] = LineChartData.data.datasets[0].data[i + 1];
                     LineChartData.data.datasets[1].data[i] = LineChartData.data.datasets[1].data[i + 1];
                     myChart.update();
@@ -266,16 +338,16 @@
                 ST = ST.toString();
                 let MT = new Date().getMinutes()
                 MT = MT.toString()
-                let HT=new Date().getUTCHours()+8;
-                HT=HT.toString();
-                LineChartData.data.labels[6]=(`${HT}:${MT}:${ST}`)
+                let HT = new Date().getUTCHours() + 8;
+                HT = HT.toString();
+                LineChartData.data.labels[6] = (`${HT}:${MT}:${ST}`)
                 LineChartData.data.datasets[0].data[6] = `${T}`;
                 LineChartData.data.datasets[1].data[6] = `${H}`;
                 myChart.update();
                 config.update();
                 config2.update();
-               
-                
+
+
                 el.addEventListener("animationend", () => {
                     el.style.animation = "none"
                     el1.style.animation = "none"
