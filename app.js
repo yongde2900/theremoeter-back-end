@@ -32,13 +32,7 @@ app.use(express.static(__dirname));
 app.get('/', (req, res) => {
   res.render('index')
 });//主頁面
-app.get('/histroy', function(req, res, next) {
-  axios.get('http://192.168.168.155:3000/api/datas?limit=20')
-  .then(data=>{
-    res.render('histroy',{temp:data.data.temprature})
-  })
-  
-});
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

@@ -10,8 +10,35 @@
 
 <body>
     <h1>
-        <%= temp %>
+        <div>
+            <canvas id="myChartLine">
+
+        </div>
     </h1>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"
+        integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
+    <script>
+    
+        var ctxLine = document.getElementById("myChartLine")
+        var LineChartData = {
+            type: 'line',
+            data: {
+                labels: ["前二十筆","前十九筆","前十八筆","前十七筆","前十六筆","前十五筆","前十四筆","前十三筆","前十二筆","前十一筆","前十筆","前九筆","前八筆","前七筆","前六筆","前五筆","前四筆","前三筆","前二筆","前一筆",],
+                datasets: [{
+                    label: ['溫度'],
+                    data: [<%-temp%>],
+                    fill: false,
+                    borderColor: 'rgb(75, 192, 192)',
+                }, {
+                    label: '濕度',
+                    data: [<%-humi%>],
+                }]
+            },
+        }
+        var myChart = new Chart(ctxLine, LineChartData);
+        myChart.update();
+    </script>
 </body>
 
 </html>
