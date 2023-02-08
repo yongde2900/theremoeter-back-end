@@ -5,7 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 const db = require('./config/db')()
-const subscriber = require('./subscriber')()
+// const subscriber = require('./subscriber')()
 
 
 var indexRouter = require('./routes/index');
@@ -32,12 +32,19 @@ app.use(express.static(__dirname));
 app.get('/', (req, res) => {
   res.render('index')
 });//主頁面
+app.get('/histroy', function(req, res, next) {
+  axios.get('http://192.168.168.155:3000/api/datas?limit=20')
+  .then(data=>{
+    res.render('histroy',{temp:data.data.temprature})
+  })
+  
+});
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
 });
 app.get('/api/datas', (req, res) => {
-  res.send("<h1>hello</h1>")
+  res.send("")
 });//主頁面
 // error handler
 app.use(function (err, req, res, next) {
