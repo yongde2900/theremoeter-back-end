@@ -7,7 +7,7 @@ const history = db.collection('history')
 
 
 
-// get the real time data from broker
+// get the Newest data from main
 router.get('/data', async (req, res) => {
   const datas = await getDataFromMain(1)
   res.json(datas[0])
@@ -37,7 +37,7 @@ async function getDataFromHistory(type) {
     day: 7
   }
 
-  const snapshot = await history.where('type', '=', type).limit(amount[type]).orderBy('earliest_timestamp', 'desc').get()
+  const snapshot = await history.where('type', '=', type).limit(amount[type]).orderBy('earliest_timestamp', 'asc').get()
   let datas = []
   snapshot.forEach(doc => {
     const data = doc.data()
