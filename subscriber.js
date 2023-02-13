@@ -36,13 +36,13 @@ module.exports = () => {
 
 
                 quarterHistory.pushData(data)
-                const quarterData = await quarterHistory.uoploadData()
+                const quarterData = await quarterHistory.uploadData()
                 if (quarterData)
                     hourHistory.pushData(quarterData)
-                const hourData = await hourHistory.uoploadData()
+                const hourData = await hourHistory.uploadData()
                 if (hourData)
                     dayHistory.pushData(hourData)
-                dayHistory.uoploadData()
+                dayHistory.uploadData()
 
             } catch (e) {
                 console.log(e)
@@ -80,7 +80,7 @@ function createHistory(type) {
             const data = history.data.concat()
             return data
         },
-        uoploadData: async () => {
+        uploadData: async () => {
             try {
                 if (onUpdateTime(history.type) && !history.isUpdated && history.data.length != 0) {
                     history.isUpdated = true
