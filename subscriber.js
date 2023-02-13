@@ -47,9 +47,9 @@ module.exports = async () => {
             hourHistory.pushData(data)
             dayHistory.pushData(data)
 
-            quarterHistory.updateData()
-            hourHistory.updateData()
-            dayHistory.updateData()
+            quarterHistory.uoploadData()
+            hourHistory.uoploadData()
+            dayHistory.uoploadData()
 
 
         })
@@ -85,11 +85,11 @@ function createHistory(type) {
             const data = history.data.concat()
             return data
         },
-        updateData: () => {
+        uoploadData: () => {
+            history.isUpdated = true
             if (onUpdateTime(history.type) && !history.isUpdated && history.data.length != 0) {
                 saveHistory(history.data, history.type)
                     .then((response) => {
-                        history.isUpdated = true
                         history.data.length = 0
                         console.log(`save ${history.type} history successed.`)
                     })
