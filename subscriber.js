@@ -86,8 +86,8 @@ function createHistory(type) {
             return data
         },
         uoploadData: () => {
-            history.isUpdated = true
             if (onUpdateTime(history.type) && !history.isUpdated && history.data.length != 0) {
+                history.isUpdated = true
                 saveHistory(history.data, history.type)
                     .then((response) => {
                         history.data.length = 0

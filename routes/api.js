@@ -37,7 +37,7 @@ async function getDataFromHistory(type) {
     day: 7
   }
 
-  const snapshot = await history.where('type', '=', type).limit(amount[type]).orderBy('earliest_timestamp', 'asc').get()
+  const snapshot = await history.where('type', '=', type).limit(amount[type]).orderBy('earliest_timestamp', 'desc').get()
   let datas = []
   snapshot.forEach(doc => {
     const data = doc.data()
@@ -45,6 +45,7 @@ async function getDataFromHistory(type) {
     data.temperature_avg = Math.floor(data.temperature_avg, -2)
     datas.push(data)
   })
+  datas.reverse()
   return datas
 }
 
