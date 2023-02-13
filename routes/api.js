@@ -36,6 +36,8 @@ async function getDataFromHistory(type) {
     hour: 24,
     day: 7
   }
+  if (!amount.hasOwnProperty(type))
+    return 'type is invalid'
 
   const snapshot = await history.where('type', '=', type).limit(amount[type]).orderBy('earliest_timestamp', 'desc').get()
   let datas = []
