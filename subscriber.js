@@ -1,9 +1,5 @@
 const mqtt = require('mqtt')
 const { saveData, saveHistory } = require('./firebaseHandler')
-const { getFirestore, Timestamp, FieldValue } = require('firebase-admin/firestore');
-const { response } = require('express');
-
-const db = getFirestore()
 
 const option = {
     username: 'user',
@@ -21,37 +17,36 @@ const hourHistory = createHistory(Type.HOUR)
 const dayHistory = createHistory(Type.DAY)
 
 
-module.exports = async () => {
+module.exports = () => {
     let client = mqtt.connect('ws://192.168.168.169:1884', option)
     client.on('connect', () => {
         console.log(`connected! \n connected time: ${new Date(Date.now())}`)
 
         client.subscribe('climate/data')
         client.on('message', async (topic, payload) => {
-            const timestamp = new Date();
-            let data = {
-                'temperature': JSON.parse(payload)['temperature'],
-                'humidity': JSON.parse(payload)['humidity'],
-                'timestamp': timestamp.valueOf(),
+            try {
+                const timestamp = new Date();
+                let data = {
+                    'temperature': JSON.parse(payload)['temperature'],
+                    'humidity': JSON.parse(payload)['humidity'],
+                    'timestamp': timestamp.valueOf(),
+                }
+                await saveData(data)
+                console.log(`save current data successed. now: ${new Date(Date.now())}`)
+
+
+                quarterHistory.pushData(data)
+                const quarterData = await quarterHistory.uoploadData()
+                if (quarterData)
+                    hourHistory.pushData(quarterData)
+                const hourData = await hourHistory.uoploadData()
+                if (hourData)
+                    dayHistory.pushData(hourData)
+                dayHistory.uoploadData()
+
+            } catch (e) {
+                console.log(e)
             }
-            let saveTask = saveData(data)
-            saveTask
-                .then((response) => {
-                    console.log(`save current data successed. now: ${new Date(Date.now())}`)
-                })
-                .catch((e) => {
-                    console.log(e)
-                })
-
-            quarterHistory.pushData(data)
-            hourHistory.pushData(data)
-            dayHistory.pushData(data)
-
-            quarterHistory.uoploadData()
-            hourHistory.uoploadData()
-            dayHistory.uoploadData()
-
-
         })
     })
 }
@@ -85,21 +80,27 @@ function createHistory(type) {
             const data = history.data.concat()
             return data
         },
-        uoploadData: () => {
-            if (onUpdateTime(history.type) && !history.isUpdated && history.data.length != 0) {
-                history.isUpdated = true
-                saveHistory(history.data, history.type)
-                    .then((response) => {
-                        history.data.length = 0
-                        console.log(`save ${history.type} history successed.`)
-                    })
-                    .catch((e) => {
-                        console.log(e)
-                    })
-            }
-            else if (!onUpdateTime(history.type) && history.isUpdated) {
-                history.isUpdated = false
-                console.log(`reset ${history.type} history successed.`)
+        uoploadData: async () => {
+            try {
+                if (onUpdateTime(history.type) && !history.isUpdated && history.data.length != 0) {
+                    history.isUpdated = true
+                    const averageData = await saveHistory(history.data, history.type)
+                    history.data.length = 0
+                    console.log(`save ${history.type} history successed.`)
+                    const data = {
+                        temperature: averageData.temperature_avg,
+                        humidity: averageData.humidity_avg,
+                        timestamp: averageData.earliest_timestamp
+                    }
+                    return data
+                }
+                else if (!onUpdateTime(history.type) && history.isUpdated) {
+                    history.isUpdated = false
+                    console.log(`reset ${history.type} history successed.`)
+                    return null
+                }
+            } catch (e) {
+                console.log(e)
             }
         }
     }
