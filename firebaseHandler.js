@@ -5,8 +5,6 @@ const dataCollection = db.collection('main')
 const historyCollection = db.collection('history')
 
 const saveData = async (data) => {
-    const dateTime = Date.now();
-    const timestamp = Math.floor(dateTime / 1000);
     const doc = dataCollection.doc()
     return await doc.set(data)
 }
@@ -24,13 +22,13 @@ const saveHistory = async (dataList, type) => {
     }
     data = {
         'type': type,
-        'temperature_avg' : temperatures / dataList.length,
-        'humidity_avg' : humidities /  dataList.length,
-        'earliest_timestamp' : earliestTimestamp,
-        'latest_timestamp' : latestTimestamp,
+        'temperature_avg': temperatures / dataList.length,
+        'humidity_avg': humidities / dataList.length,
+        'earliest_timestamp': earliestTimestamp,
+        'latest_timestamp': latestTimestamp,
     }
-    
+
     return await doc.set(data)
 }
 
-module.exports = {saveData, saveHistory}
+module.exports = { saveData, saveHistory }
