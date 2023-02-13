@@ -10,25 +10,28 @@ const saveData = async (data) => {
 }
 
 const saveHistory = async (dataList, type) => {
-
-    let doc = historyCollection.doc()
-    let temperatures = 0
-    let humidities = 0
-    let earliestTimestamp = dataList[0].timestamp
-    let latestTimestamp = dataList[dataList.length - 1].timestamp
-    for (var i = 0; i < dataList.length; i++) {
-        temperatures += dataList[i].temperature
-        humidities += dataList[i].humidity
+    try {
+        let doc = historyCollection.doc()
+        let temperatures = 0
+        let humidities = 0
+        let earliestTimestamp = dataList[0].timestamp
+        let latestTimestamp = dataList[dataList.length - 1].timestamp
+        for (var i = 0; i < dataList.length; i++) {
+            temperatures += dataList[i].temperature
+            humidities += dataList[i].humidity
+        }
+        data = {
+            'type': type,
+            'temperature_avg': temperatures / dataList.length,
+            'humidity_avg': humidities / dataList.length,
+            'earliest_timestamp': earliestTimestamp,
+            'latest_timestamp': latestTimestamp,
+        }
+        await doc.set(data)
+        return data
+    } catch (e) {
+        console.log(e)
     }
-    data = {
-        'type': type,
-        'temperature_avg': temperatures / dataList.length,
-        'humidity_avg': humidities / dataList.length,
-        'earliest_timestamp': earliestTimestamp,
-        'latest_timestamp': latestTimestamp,
-    }
-
-    return await doc.set(data)
 }
 
 module.exports = { saveData, saveHistory }
