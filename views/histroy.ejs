@@ -6,38 +6,329 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        #tab-1:target,
+        #tab-2:target,
+        #tab-3:target,
+        #tab-4:target {}
+
+        #tab-1:target~#tab>ul li a[href$="#tab-1"],
+        #tab-2:target~#tab>ul li a[href$="#tab-2"],
+        #tab-3:target~#tab>ul li a[href$="#tab-3"],
+        #tab-4:target~#tab>ul li a[href$="#tab-4"] {}
+
+        #tab-1:target~#tab>div.tab-content-1,
+        #tab-2:target~#tab>div.tab-content-2,
+        #tab-3:target~#tab>div.tab-content-3,
+        #tab-4:target~#tab>div.tab-content-4 {}
+
+        #tab {
+            width: 50%;
+            background: #1caa5d;
+            border: solid 1px #1caa5d;
+        }
+
+        /* 頁籤ul */
+        #tab>ul {
+            overflow: hidden;
+            margin: 0;
+            padding: 10px 20px 0 20px;
+        }
+
+        #tab>ul>li {
+            list-style-type: none;
+        }
+
+        #tab>ul>li>a {
+            text-decoration: none;
+            font-size: 13px;
+            color: #333;
+            float: left;
+            padding: 10px;
+            margin-left: 5px;
+        }
+
+        #tab>div {
+            clear: both;
+            padding: 0 15px;
+            height: 0;
+            overflow: hidden;
+            visibility: hidden;
+            -webkit-transition: all .4s ease-in-out;
+            -moz-transition: all .4s ease-in-out;
+            -ms-transition: all .4s ease-in-out;
+            -o-transition: all .4s ease-in-out;
+            transition: all .4s ease-in-out;
+        }
+
+        /* span:target */
+
+
+        span:target~#tab>ul li:first-child a {
+            background: #1caa5d;
+        }
+
+        span:target~#tab>div:first-of-type {
+            visibility: hidden;
+            height: 0;
+            padding: 0 15px;
+        }
+
+        span~#tab>ul li:first-child a,
+        #tab-1:target~#tab>ul li a[href$="#tab-1"],
+        #tab-2:target~#tab>ul li a[href$="#tab-2"],
+        #tab-3:target~#tab>ul li a[href$="#tab-3"],
+        #tab-4:target~#tab>ul li a[href$="#tab-4"] {
+            background: #fff;
+        }
+
+        span~#tab>div:first-of-type,
+        #tab-1:target~#tab>div.tab-content-1,
+        #tab-2:target~#tab>div.tab-content-2,
+        #tab-3:target~#tab>div.tab-content-3,
+        #tab-4:target~#tab>div.tab-content-4 {
+            visibility: visible;
+            height: 300px;
+            background: #fff;
+        }
+
+        span {
+            display: none;
+        }
+    </style>
 </head>
 
-<body>
-    <h1>
-        <div>
+<body onload="loadchart()">
+    <span id="tab-1">1</span>
+    <span id="tab-2">2</span>
+    <span id="tab-3">3</span>
+    <div id="tab">
+        <ul>
+            <li><a href="#tab-1">歷史資料:小時</a></li>
+            <li><a href="#tab-2">歷史資料:日</a></li>
+            <li><a href="#tab-3">讚</a></li>
+        </ul>
+        <div class="tab-content-1">
             <canvas id="myChartLine">
-
         </div>
-    </h1>
+        <div class="tab-content-2">
+            <canvas id="myChartLine2">
+        </div>
+        <div class="tab-content-3">
+            <canvas id="myChartLine3">
+        </div>
+    </div>
+    <input type="button" onclick="location.href='http://localhost:3000/'" value="回到上一頁"></input>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://code.jquery.com/jquery-3.4.1.js"
-        integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.3.js"
+        integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.3/axios.js"
+        integrity="sha512-uap0bTaa/bPjLtLVuiWS+qak4SJrOPcdfVzUdrrE7LgvtMlkV6DeiBH7Rgt7B+74M3crOr3QdTX3gCTMMRVzZA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
-    
+
+        const AVG_T = []
+        const AVG_H = []
+        const AVG_Time = []
+        axios.get('http://192.168.168.155:3000/api/datas/hour/?limit=10')
+            .then((res) => {
+                const data = res.data
+                data.forEach(element => {
+                    AVG_T.push(element.temperature_avg)
+                    AVG_H.push(element.humidity_avg)
+                    let time = 0;
+                    if (typeof (element.latest_timestamp) == "string") {
+                        time = new Date(Number(element.latest_timestamp)).getHours() + ":" + new Date(Number(element.latest_timestamp)).getMinutes()
+
+                    } else {
+                        time = new Date(element.latest_timestamp).getHours() + ":" + new Date(element.latest_timestamp).getMinutes()
+                    }
+
+                    AVG_Time.push(time)
+                }).then()
+            }).catch((err) => {
+                console.log(err)
+            });
         var ctxLine = document.getElementById("myChartLine")
         var LineChartData = {
             type: 'line',
             data: {
-                labels: ["前二十筆","前十九筆","前十八筆","前十七筆","前十六筆","前十五筆","前十四筆","前十三筆","前十二筆","前十一筆","前十筆","前九筆","前八筆","前七筆","前六筆","前五筆","前四筆","前三筆","前二筆","前一筆",],
+                labels: AVG_Time,
                 datasets: [{
-                    label: ['溫度'],
-                    data: [<%-temp%>],
+                    label: ['平均溫度'],
+                    data: AVG_T,
                     fill: false,
                     borderColor: 'rgb(75, 192, 192)',
                 }, {
-                    label: '濕度',
-                    data: [<%-humi%>],
+                    label: '平均濕度',
+                    data: AVG_H,
                 }]
             },
         }
-        var myChart = new Chart(ctxLine, LineChartData);
-        myChart.update();
+
+        function loadchart() {
+            var myChart = new Chart(ctxLine, LineChartData);
+            // myChart.update();
+        }
+    </script>
+    <script>
+        const AVG_TD = []
+        const AVG_HD = []
+        const AVG_TimeD = []
+        axios.get('http://192.168.168.155:3000/api/datas/day')
+            .then((res) => {
+                const data = res.data
+                    .forEach(element => {
+                        console.log(element.latest_timestamp)
+                        AVG_TD.push(element.temperature_avg)
+                        AVG_HD.push(element.humidity_avg)
+                        const TimeD = new Date(element.latest_timestamp).getMonth() + "月" + new Date(element.latest_timestamp).getDay() + "日"
+                        AVG_TimeD.push(TimeD)
+                    });
+            }).catch((err) => {
+                console.log(err)
+            });
+
+        var ctxLine2 = document.getElementById("myChartLine2")
+        var LineChartData2 = {
+            type: 'line',
+            data: {
+                labels: AVG_TimeD,
+                datasets: [{
+
+                    label: '平均溫度',
+                    data: AVG_TD,
+                    fill: false,
+                    borderColor: 'rgb(75, 192, 192)',
+                }, {
+                    label: '平均濕度',
+                    data: AVG_HD,
+                }]
+            },
+        }
+        var myChart2 = new Chart(ctxLine2, LineChartData2);
+        // myChart2.update();
+    </script>
+    <script>
+
+        var ctxLine3 = document.getElementById("myChartLine3")
+        var LineChartData3 = {
+            type: 'bar',
+            data: {
+                labels: ["|", "|", "|", "|", "|", "|", "|", "|", "|", "|", "|", "|", "|", "|", "|", "|", "|", "|", "|", "|", "|", "|", "|", "|",],
+                datasets: [{
+                    barPercentage: 1.0,
+                    categoryPercentage: 1.0,
+                    label: ['溫度'],
+                    data: [25, 25, 25, 25, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 150],
+                    fill: false,
+
+                },
+                {barPercentage: 1.0,
+                    categoryPercentage: 1.0,
+                    label: '手指1',
+                    data: [0, 0, 0, 0, 0, 0, 0, 5, 5, 5],
+                    fill: false,
+                    backgroundColor: "grey",
+                    borderColor: 'black',
+                },
+
+                {barPercentage: 1.0,
+                    categoryPercentage: 1.0,
+                    label: '手',
+                    data: [40, 40, 40, 40, 50, 70, 90, 10, 10, 10],
+                    fill: false,
+                    backgroundColor: "rgb(0,119,255)",
+                    borderColor: 'black',
+                }, {barPercentage: 1.0,
+                    categoryPercentage: 1.0,
+                    label: '手指2',
+                    data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    fill: false,
+                    backgroundColor: "grey",
+                    borderColor: 'black',
+                }, {barPercentage: 1.0,
+                    categoryPercentage: 1.0,
+                    label: '手3',
+                    data: [0, 0, 0, 0, 0, 0, 0, 15, 15, 15],
+                    fill: false,
+                    backgroundColor: "rgb(0,119,255)",
+                    borderColor: 'black',
+                }, {barPercentage: 1.0,
+                    categoryPercentage: 1.0,
+                    label: '手指2',
+                    data: [0, 0, 0, 0, 0, 0, 0, 0, 0,0 ,],
+                    fill: false,
+                    backgroundColor: "grey",
+                    borderColor: 'black',
+                }, {barPercentage: 1.0,
+                    categoryPercentage: 1.0,
+                    label: '手3',
+                    data: [0, 0, 0, 0, 0, 0, 0, 15, 15, 15],
+                    fill: false,
+                    backgroundColor: "rgb(0,119,255)",
+                    borderColor: 'black',
+                }, {barPercentage: 1.0,
+                    categoryPercentage: 1.0,
+                    label: '手指2',
+                    data: [0, 0, 0, 0, 0, 0, 0, 5, 5, 5, ,],
+                    fill: false,
+                    backgroundColor: "grey",
+                    borderColor: 'black',
+                }, {barPercentage: 1.0,
+                    categoryPercentage: 1.0,
+                    label: '手3',
+                    data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    fill: false,
+                    backgroundColor: "rgb(0,119,255)",
+                    borderColor: 'black',
+                },
+                {barPercentage: 1.0,
+                    categoryPercentage: 1.0,
+                    label: '111',
+                    data: [95, 95, 95, 95, 90, 70, 50, 90, 90, 90 ],
+                    fill: false,
+                    backgroundColor: "grey",
+                    borderColor: 'black',
+                },]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    xAxes: {
+                        ticks: {
+                            display: false
+                        },
+                        stacked: true,
+
+                    },
+                    yAxes: {
+                        stacked: true,
+
+
+                        ticks: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        suggestedMax: 100,
+
+
+                    },
+                    x: {
+
+                    }
+
+                }
+            },
+        }
+        var myChart3 = new Chart(ctxLine3, LineChartData3);
+        myChart3.update();
     </script>
 </body>
 

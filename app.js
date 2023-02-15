@@ -37,9 +37,12 @@ app.get('/', (req, res) => {
 app.use(function (req, res, next) {
   next(createError(404));
 });
-app.get('/api/datas', (req, res) => {
-  res.send("")
-});//主頁面
+// app.get('/api/datas', (req, res) => {
+//   console.log(res.data.timestamp)
+//   res.render('histroy',{temp:res.data.temperature,humi:res.data.humidity,time:res.data.timestamp})
+// });
+
+//主頁面
 // error handler
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
