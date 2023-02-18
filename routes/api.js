@@ -9,23 +9,30 @@ const history = db.collection('history')
 
 // get the Newest data from main
 router.get('/data', async (req, res) => {
-  const datas = await getDataFromMain(1)
-  res.json(datas[0])
+  try {
+    const datas = await getDataFromMain(1)
+    res.json(datas[0])
+  } catch (e) { console.log(e) }
 })
 
 //get the  history data from main
 router.get('/datas', async (req, res) => {
-  let limit = parseInt(req.query.limit)
-  limit = limit ? limit : 10
-  const datas = await getDataFromMain(limit)
-  res.json(datas)
+  try {
+    let limit = parseInt(req.query.limit)
+    limit = limit ? limit : 10
+    const datas = await getDataFromMain(limit)
+    res.json(datas)
+  } catch (e) { console.log(e) }
 })
 
 //get history data with type
 router.get('/datas/:type', async (req, res) => {
-  const type = req.params.type
-  const datas = await getDataFromHistory(type)
-  res.json(datas)
+  try {
+    const type = req.params.type
+    const datas = await getDataFromHistory(type)
+    res.header('Access-Control-Allow-Origin', '*');
+    res.json(datas)
+  } catch (e) { console.log(e) }
 })
 
 module.exports = router

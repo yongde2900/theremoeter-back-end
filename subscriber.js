@@ -3,7 +3,7 @@ const { saveData, saveHistory } = require('./firebaseHandler')
 
 const option = {
     username: 'user',
-    password: '123456'
+    password: '123456',
 }
 
 const Type = { // 假的Enum
@@ -21,34 +21,14 @@ module.exports = () => {
     let client = mqtt.connect('ws://192.168.168.169:1884', option)
     client.on('connect', () => {
         console.log(`connected! \n connected time: ${new Date(Date.now())}`)
-
         client.subscribe('climate/data')
-        client.on('message', async (topic, payload) => {
-            try {
-                const timestamp = new Date();
-                let data = {
-                    'temperature': JSON.parse(payload)['temperature'],
-                    'humidity': JSON.parse(payload)['humidity'],
-                    'timestamp': timestamp.valueOf(),
-                }
-                await saveData(data)
-                console.log(`save current data successed. now: ${new Date(Date.now())}`)
-
-
-                quarterHistory.pushData(data)
-                const quarterData = await quarterHistory.uploadData()
-                if (quarterData)
-                    hourHistory.pushData(quarterData)
-                const hourData = await hourHistory.uploadData()
-                if (hourData)
-                    dayHistory.pushData(hourData)
-                dayHistory.uploadData()
-
-            } catch (e) {
-                console.log(e)
-            }
-        })
+        client.on('message',onMessageHandlerasync)
     })
+    client.on('offline', () => {
+        client.removeListener('message',onMessageHandlerasync)
+        console.log('remove onMessageListner')
+    })
+    
 }
 
 const onUpdateTime = (type) => {
@@ -103,5 +83,31 @@ function createHistory(type) {
                 console.log(e)
             }
         }
+    }
+}
+
+async function onMessageHandlerasync(topic, payload) {
+    try {
+        const timestamp = new Date();
+        let data = {
+            'temperature': JSON.parse(payload)['temperature'],
+            'humidity': JSON.parse(payload)['humidity'],
+            'timestamp': timestamp.valueOf(),
+        }
+        await saveData(data)
+        console.log(`save current data successed. now: ${new Date(Date.now())}`)
+
+
+        quarterHistory.pushData(data)
+        const quarterData = await quarterHistory.uploadData()
+        if (quarterData)
+            hourHistory.pushData(quarterData)
+        const hourData = await hourHistory.uploadData()
+        if (hourData)
+            dayHistory.pushData(hourData)
+        dayHistory.uploadData()
+
+    } catch (e) {
+        console.log(e)
     }
 }
