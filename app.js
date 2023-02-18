@@ -4,8 +4,13 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+<<<<<<< HEAD
 const db = require('./config/db')()
 // const subscriber = require('./subscriber')()
+=======
+require('./config/db')()
+require('./subscriber')()
+>>>>>>> 42fdf475ce08c64a3e118ae36aa34b70816ca447
 
 
 var indexRouter = require('./routes/index');

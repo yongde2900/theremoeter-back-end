@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>歷史資料</title>
     <style>
         #tab-1:target,
         #tab-2:target,
@@ -15,12 +15,12 @@
         #tab-1:target~#tab>ul li a[href$="#tab-1"],
         #tab-2:target~#tab>ul li a[href$="#tab-2"],
         #tab-3:target~#tab>ul li a[href$="#tab-3"],
-        #tab-4:target~#tab>ul li a[href$="#tab-4"] {}
+        #tab-3:target~#tab>ul li a[href$="#tab-4"] {}
 
         #tab-1:target~#tab>div.tab-content-1,
         #tab-2:target~#tab>div.tab-content-2,
         #tab-3:target~#tab>div.tab-content-3,
-        #tab-4:target~#tab>div.tab-content-4 {}
+        #tab-3:target~#tab>div.tab-content-4 {}
 
         #tab {
             width: 50%;
@@ -59,9 +59,8 @@
             -ms-transition: all .4s ease-in-out;
             -o-transition: all .4s ease-in-out;
             transition: all .4s ease-in-out;
+            
         }
-
-        /* span:target */
 
 
         span:target~#tab>ul li:first-child a {
@@ -91,7 +90,6 @@
             height: 300px;
             background: #fff;
         }
-
         span {
             display: none;
         }
@@ -102,11 +100,13 @@
     <span id="tab-1">1</span>
     <span id="tab-2">2</span>
     <span id="tab-3">3</span>
+    <span id="tab-4">4</span>
     <div id="tab">
         <ul>
             <li><a href="#tab-1">歷史資料:小時</a></li>
             <li><a href="#tab-2">歷史資料:日</a></li>
-            <li><a href="#tab-3">讚</a></li>
+            <li><a href="#tab-3">歷史資料:一刻鐘</a></li>
+            <li><a href="#tab-4">讚</a></li>
         </ul>
         <div class="tab-content-1">
             <canvas id="myChartLine">
@@ -117,7 +117,14 @@
         <div class="tab-content-3">
             <canvas id="myChartLine3">
         </div>
+        <div class="tab-content-4">
+            <canvas id="myChartLine4">
+        </div>
+       
     </div>
+
+   
+    
     <input type="button" onclick="location.href='http://localhost:3000/'" value="回到上一頁"></input>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.3.js"
@@ -130,7 +137,7 @@
         const AVG_T = []
         const AVG_H = []
         const AVG_Time = []
-        axios.get('http://192.168.168.155:3000/api/datas/hour/?limit=10')
+        axios.get('http://192.168.168.155:3000/api/datas/hour/')
             .then((res) => {
                 const data = res.data
                 data.forEach(element => {
@@ -210,9 +217,47 @@
         // myChart2.update();
     </script>
     <script>
+        const AVG_QT = []
+        const AVG_QH = []
+        const AVG_TimeQ = []
+        axios.get('http://192.168.168.155:3000/api/datas/quarter')
+            .then((res) => {
+                const data = res.data
+                    .forEach(element => {
+                        console.log(element.latest_timestamp)
+                        AVG_QT.push(element.temperature_avg)
+                        AVG_QH.push(element.humidity_avg)
+                        const TimeQ = new Date(element.latest_timestamp).getHours() + ":" + new Date(element.latest_timestamp).getMinutes() + ""
+                        AVG_TimeQ.push(TimeQ)
+                    });
+            }).catch((err) => {
+                console.log(err)
+            });
 
         var ctxLine3 = document.getElementById("myChartLine3")
         var LineChartData3 = {
+            type: 'line',
+            data: {
+                labels: AVG_TimeQ,
+                datasets: [{
+
+                    label: '平均溫度',
+                    data: AVG_QT,
+                    fill: false,
+                    borderColor: 'rgb(75, 192, 192)',
+                }, {
+                    label: '平均濕度',
+                    data: AVG_QH,
+                }]
+            },
+        }
+        var myChart3 = new Chart(ctxLine3, LineChartData3);
+        // myChart2.update();
+    </script>
+    <script>
+
+        var ctxLine4 = document.getElementById("myChartLine4")
+        var LineChartData4 = {
             type: 'bar',
             data: {
                 labels: ["|", "|", "|", "|", "|", "|", "|", "|", "|", "|", "|", "|", "|", "|", "|", "|", "|", "|", "|", "|", "|", "|", "|", "|",],
@@ -220,73 +265,82 @@
                     barPercentage: 1.0,
                     categoryPercentage: 1.0,
                     label: ['溫度'],
-                    data: [25, 25, 25, 25, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 150],
+                    data: [25, 25, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 150],
                     fill: false,
 
                 },
-                {barPercentage: 1.0,
+                {
+                    barPercentage: 1.0,
                     categoryPercentage: 1.0,
                     label: '手指1',
-                    data: [0, 0, 0, 0, 0, 0, 0, 5, 5, 5],
+                    data: [0, 0, 0, 0, 0, 5, 5, 5],
                     fill: false,
                     backgroundColor: "grey",
                     borderColor: 'black',
                 },
 
-                {barPercentage: 1.0,
+                {
+                    barPercentage: 1.0,
                     categoryPercentage: 1.0,
                     label: '手',
-                    data: [40, 40, 40, 40, 50, 70, 90, 10, 10, 10],
+                    data: [40, 40, 50, 70, 90, 10, 10, 10],
                     fill: false,
                     backgroundColor: "rgb(0,119,255)",
                     borderColor: 'black',
-                }, {barPercentage: 1.0,
+                }, {
+                    barPercentage: 1.0,
                     categoryPercentage: 1.0,
                     label: '手指2',
-                    data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    data: [0, 0, 0, 0, 0, 0, 0, 0],
                     fill: false,
                     backgroundColor: "grey",
                     borderColor: 'black',
-                }, {barPercentage: 1.0,
+                }, {
+                    barPercentage: 1.0,
                     categoryPercentage: 1.0,
                     label: '手3',
-                    data: [0, 0, 0, 0, 0, 0, 0, 15, 15, 15],
+                    data: [0, 0, 0, 0, 0, 15, 15, 15],
                     fill: false,
                     backgroundColor: "rgb(0,119,255)",
                     borderColor: 'black',
-                }, {barPercentage: 1.0,
+                }, {
+                    barPercentage: 1.0,
                     categoryPercentage: 1.0,
                     label: '手指2',
-                    data: [0, 0, 0, 0, 0, 0, 0, 0, 0,0 ,],
+                    data: [0, 0, 0, 0, 0, 0, 0, 0,],
                     fill: false,
                     backgroundColor: "grey",
                     borderColor: 'black',
-                }, {barPercentage: 1.0,
+                }, {
+                    barPercentage: 1.0,
                     categoryPercentage: 1.0,
                     label: '手3',
-                    data: [0, 0, 0, 0, 0, 0, 0, 15, 15, 15],
+                    data: [0, 0, 0, 0, 0, 15, 15, 15],
                     fill: false,
                     backgroundColor: "rgb(0,119,255)",
                     borderColor: 'black',
-                }, {barPercentage: 1.0,
+                }, {
+                    barPercentage: 1.0,
                     categoryPercentage: 1.0,
                     label: '手指2',
-                    data: [0, 0, 0, 0, 0, 0, 0, 5, 5, 5, ,],
+                    data: [0, 0, 0, 0, 0, 5, 5, 5, ,],
                     fill: false,
                     backgroundColor: "grey",
                     borderColor: 'black',
-                }, {barPercentage: 1.0,
+                }, {
+                    barPercentage: 1.0,
                     categoryPercentage: 1.0,
                     label: '手3',
-                    data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    data: [0, 0, 0, 0, 0, 0, 0, 0],
                     fill: false,
                     backgroundColor: "rgb(0,119,255)",
                     borderColor: 'black',
                 },
-                {barPercentage: 1.0,
+                {
+                    barPercentage: 1.0,
                     categoryPercentage: 1.0,
                     label: '111',
-                    data: [95, 95, 95, 95, 90, 70, 50, 90, 90, 90 ],
+                    data: [95, 95, 90, 70, 50, 90, 90, 90],
                     fill: false,
                     backgroundColor: "grey",
                     borderColor: 'black',
@@ -327,8 +381,8 @@
                 }
             },
         }
-        var myChart3 = new Chart(ctxLine3, LineChartData3);
-        myChart3.update();
+        var myChart4 = new Chart(ctxLine4, LineChartData4);
+        myChart4.update();
     </script>
 </body>
 
