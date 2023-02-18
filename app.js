@@ -4,8 +4,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-const db = require('./config/db')()
-const subscriber = require('./subscriber')()
+require('./config/db')()
+require('./subscriber')()
 
 
 var indexRouter = require('./routes/index');
