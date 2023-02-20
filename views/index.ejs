@@ -287,7 +287,6 @@
                     el1.style.animation = "breath 1s ";
                     chartdata.data.datasets[0].data[0] = `${T}`;
                     chartdata2.data.datasets[0].data[0] = `${H}`;
-                    LineChartData.data.labels[6] = (`${HT}:${MT}:${ST}`)
                 
                     for (let i = 0; i < LineChartData.data.datasets[0].data.length - 1; i++) {
                     LineChartData.data.labels[i] = LineChartData.data.labels[i + 1];
@@ -306,6 +305,8 @@
                 HT = HT.toString();
                 LineChartData.data.datasets[0].data[6] = `${T}`;
                 LineChartData.data.datasets[1].data[6] = `${H}`;
+                LineChartData.data.labels[6] = (`${HT}:${MT}:${ST}`)
+
                 myChart.update();
                 config.update();
                 config2.update();
