@@ -113,7 +113,7 @@
         
        
     </div> 
-    <input type="button" onclick="location.href='http://localhost:3000/'" value="回到上一頁"></input>
+    <input type="button" onclick="history.go(-1)" value="回到上一頁"></input>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.3.js"
         integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM=" crossorigin="anonymous"></script>
@@ -125,7 +125,7 @@
         const AVG_T = []
         const AVG_H = []
         const AVG_Time = []
-        axios.get('http://192.168.168.155:3000/api/datas/hour/')
+        axios.get('https://therometer.onrender.com/api/datas/hour')
             .then((res) => {
                 const data = res.data
                 data.forEach(element => {
@@ -170,7 +170,7 @@
         const AVG_TD = []
         const AVG_HD = []
         const AVG_TimeD = []
-        axios.get('http://192.168.168.155:3000/api/datas/day')
+        axios.get('https://therometer.onrender.com/api/datas/day')
             .then((res) => {
                 const data = res.data
                     .forEach(element => {
@@ -208,7 +208,7 @@
         const AVG_QT = []
         const AVG_QH = []
         const AVG_TimeQ = []
-        axios.get('http://192.168.168.155:3000/api/datas/quarter')
+        axios.get('https://therometer.onrender.com/api/datas/quarter')
             .then((res) => {
                 const data = res.data
                     .forEach(element => {
