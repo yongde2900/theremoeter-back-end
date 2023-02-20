@@ -295,11 +295,14 @@
                     LineChartData.data.datasets[1].data[i] = LineChartData.data.datasets[1].data[i + 1];
                     myChart.update();
                 }
-                let ST = new Date().getSeconds()
+                let ST =0;
+                ST= new Date().getSeconds()
                 ST = ST.toString();
-                let MT = new Date().getMinutes()
+                let MT =0
+                MT= new Date().getMinutes()
                 MT = MT.toString()
-                let HT = new Date().getUTCHours() + 8;
+                let HT =0
+                HT= new Date().getUTCHours() + 8;
                 HT = HT.toString();
                 LineChartData.data.datasets[0].data[6] = `${T}`;
                 LineChartData.data.datasets[1].data[6] = `${H}`;
