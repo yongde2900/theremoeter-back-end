@@ -98,7 +98,7 @@
     </style>
 </head>
 
-<body onload="current_time();getDataAndUpdate();">
+<body onload="current_time();">
     <div class="container px-4">
         <video autoplay muted loop>
             <source
@@ -288,8 +288,7 @@
                     chartdata.data.datasets[0].data[0] = `${T}`;
                     chartdata2.data.datasets[0].data[0] = `${H}`;
                     LineChartData.data.labels[6] = (`${HT}:${MT}:${ST}`)
-                LineChartData.data.datasets[0].data[6] = `${T}`;
-                LineChartData.data.datasets[1].data[6] = `${H}`;
+                
                     for (let i = 0; i < LineChartData.data.datasets[0].data.length - 1; i++) {
                     LineChartData.data.labels[i] = LineChartData.data.labels[i + 1];
                     LineChartData.data.datasets[0].data[i] = LineChartData.data.datasets[0].data[i + 1];
@@ -302,7 +301,8 @@
                 MT = MT.toString()
                 let HT = new Date().getUTCHours() + 8;
                 HT = HT.toString();
-                
+                LineChartData.data.datasets[0].data[6] = `${T}`;
+                LineChartData.data.datasets[1].data[6] = `${H}`;
                 myChart.update();
                 config.update();
                 config2.update();
@@ -316,6 +316,7 @@
             setInterval("getDataAndUpdate()",5000);
 
         }
+        getDataAndUpdate();
         // let client = mqtt.connect('ws://192.168.168.169:1884', option)
         // client.on('connect', () => {
         //     console.log('connected')
