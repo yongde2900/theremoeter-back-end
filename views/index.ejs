@@ -98,7 +98,7 @@
     </style>
 </head>
 
-<body onload="current_time();">
+<body onload="current_time();getDataAndUpdate();">
     <div class="container px-4">
         <video autoplay muted loop>
             <source
@@ -272,10 +272,7 @@
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script type="module">
         // connect to broker with websocket
-        let option = {
-            username: 'user',
-            password: '123456'
-        }
+    
 
 
         function getDataAndUpdate(){
