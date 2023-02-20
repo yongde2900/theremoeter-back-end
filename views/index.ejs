@@ -282,10 +282,9 @@
             axios.get('https://therometer.onrender.com/api/data')
             .then((res)=>{
                 const data =res.data;
-                const el =document.getElementById("temp")
-                data.forEach(element => {
-                    const T =element.temperature;
-                    const H =element.humidity;
+                
+                    const T =data.temperature;
+                    const H =data.humidity;
                     document.getElementById('temp').innerHTML = `溫度=${T}`;
                     document.getElementById('humi').innerHTML = `濕度=${H}`;
                     const el = document.getElementById("temp");
@@ -317,7 +316,7 @@
                     el1.style.animation = "none"
                     // console.log("hi here")
                 })
-                });
+               
             })
         }
         setInterval(getDataAndUpdate(),5000);
