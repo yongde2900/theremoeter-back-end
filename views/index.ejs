@@ -272,9 +272,6 @@
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script type="module">
         // connect to broker with websocket
-    
-
-
         function getDataAndUpdate(){
             axios.get('https://therometer.onrender.com/api/data')
             .then((res)=>{
@@ -316,9 +313,8 @@
                
             })
             setInterval(getDataAndUpdate(),5000);
-
         }
-
+        getDataAndUpdate();
         // let client = mqtt.connect('ws://192.168.168.169:1884', option)
         // client.on('connect', () => {
         //     console.log('connected')
