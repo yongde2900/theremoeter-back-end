@@ -22,27 +22,16 @@ module.exports = () => {
     client.on('connect', () => {
         console.log(`connected! \n connected time: ${new Date(Date.now())}`)
         client.subscribe('climate/data')
-        client.on('message',onMessageHandlerasync)
+        client.on('message', onMessageHandlerasync)
     })
     client.on('offline', () => {
-        client.removeListener('message',onMessageHandlerasync)
+        client.removeListener('message', onMessageHandlerasync)
         console.log('remove onMessageListner')
     })
-    
+
 }
 
-const onUpdateTime = (type) => {
-    let now = new Date(Date.now())
-    if (type == Type.QUARTER) {
-        return now.getMinutes() % 15 == 0
-    }
-    else if (type == Type.HOUR) {
-        return now.getMinutes() == 0
-    }
-    else if (type == Type.DAY) {
-        return now.getHours() == 18
-    }
-}
+
 
 
 function createHistory(type) {
@@ -50,6 +39,19 @@ function createHistory(type) {
         type: type,
         data: [],
         isUpdated: false
+    }
+
+    const onUpdateTime = (type) => {
+        let now = new Date(Date.now())
+        if (type == Type.QUARTER) {
+            return now.getMinutes() % 15 == 0
+        }
+        else if (type == Type.HOUR) {
+            return now.getMinutes() == 0
+        }
+        else if (type == Type.DAY) {
+            return now.getHours() == 18
+        }
     }
 
     return {
@@ -99,12 +101,8 @@ async function onMessageHandlerasync(topic, payload) {
 
 
         quarterHistory.pushData(data)
-        const quarterData = await quarterHistory.uploadData()
-        if (quarterData)
-            hourHistory.pushData(quarterData)
-        const hourData = await hourHistory.uploadData()
-        if (hourData)
-            dayHistory.pushData(hourData)
+        if (quarterData = await quarterHistory.uploadData()) hourHistory.pushData(quarterData)
+        if (hourData = await hourHistory.uploadData()) dayHistory.pushData(hourData)
         dayHistory.uploadData()
 
     } catch (e) {

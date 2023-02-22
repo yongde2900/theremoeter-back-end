@@ -9,7 +9,8 @@ const db = require('./config/db')()
 
 
 var indexRouter = require('./routes/index');
-const apiRouter = require('./routes/api')
+const apiRouter = require('./routes/api');
+const { projectManagement } = require('firebase-admin');
 var app = express();
 
 // view engine setup
