@@ -125,6 +125,9 @@
         const AVG_T = []
         const AVG_H = []
         const AVG_Time = []
+
+        function loadchart() {
+
         axios.get('https://therometer.onrender.com/api/datas/hour')
             .then((res) => {
                 const data = res.data
@@ -161,9 +164,9 @@
             },
         }
 
-        function loadchart() {
             var myChart = new Chart(ctxLine, LineChartData);
             // myChart.update();
+            console.log("loaded")
         }
     </script>
     <script>
@@ -174,7 +177,6 @@
             .then((res) => {
                 const data = res.data
                     .forEach(element => {
-                        console.log(element.latest_timestamp)
                         AVG_TD.push(element.temperature_avg)
                         AVG_HD.push(element.humidity_avg)
                         const TimeD = new Date(element.latest_timestamp).getMonth() + "月" + new Date(element.latest_timestamp).getDay() + "日"
