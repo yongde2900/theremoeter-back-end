@@ -2,6 +2,7 @@ const { getFirestore } = require('firebase-admin/firestore');
 const db = getFirestore()
 const history = db.collection('history')
 
+//如果最接近的時間段沒有資料的話，會無法執行快取機制，但運作不會有問題，例如：現在時間是4:35要抓quarter資料但是沒有4:30的資料會無法進行快取機制。
 
 
 function Cache(fn, type) {
