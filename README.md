@@ -10,10 +10,15 @@
 在瀏覽器開啟localhost:3000即可看到此專案內容。
 ## 支援
 EJ 座位:Jimmy的右邊 k0970133227@gmail.com
+
 Jimmy 座位:EJ的左邊 com414141@gmail.com
+
 Bin 座位:Jimmy的左邊 k1234988@gmail.com
 ## API
 獲取資料的API分為三個時間頻率
+
 quarter:十五分鐘一筆，一次抓取4筆
+
 hour:一小時一筆，一次抓取24筆
+
 day:一天一筆，一次抓取7筆
