@@ -4,7 +4,7 @@ const { getFirestore } = require('firebase-admin/firestore');
 const db = getFirestore()
 const main = db.collection('main')
 const history = db.collection('history')
-
+const getCache = require('../helper/cache')
 
 
 // get the Newest data from main
@@ -29,7 +29,10 @@ router.get('/datas', async (req, res) => {
 router.get('/datas/:type', async (req, res) => {
   try {
     const type = req.params.type
-    const datas = await getDataFromHistory(type)
+    if (type !== 'quarter' && type !== 'hour' && type !== 'day')
+      return res.send('Type is invalid')
+    const cache = getCache(type)
+    const datas = await cache.useCache()
     res.header('Access-Control-Allow-Origin', '*');
     res.json(datas)
   } catch (e) { console.log(e) }
