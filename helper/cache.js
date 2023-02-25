@@ -2,13 +2,12 @@ const { getFirestore } = require('firebase-admin/firestore');
 const db = getFirestore()
 const history = db.collection('history')
 
-//如果最接近的時間段沒有資料的話，會無法執行快取機制，但運作不會有問題，例如：現在時間是4:35要抓quarter資料但是沒有4:30的資料會無法進行快取機制。
-
 
 function Cache(fn, type) {
     const cache = []
+    let breakTimestamp = 0
 
-    function dataIndicator(type) {
+    function updateBreakTimestamp(type) {
 
         const date = new Date()
         const day = date.getDate()
@@ -17,62 +16,45 @@ function Cache(fn, type) {
         switch (type) {
             case 'quarter':
                 const goalTime = Math.floor(minutes / 15)
-                if (goalTime !== 0) {
-                    date.setMinutes(goalTime * 15)
+                if (goalTime === 3) {
+                    date.setMinutes(0)
+                    date.setHours(hour + 1)
                 }
                 else {
-                    date.setMinutes(0)
-                    date.setHours(hour - 1)
+                    date.setMinutes((goalTime + 1) * 15)
                 }
-                return date
+                break
             case 'hour':
-                date.setHours(hour - 1)
-                return date
+                date.setHours(hour + 1)
+                date.setMinutes(0)
+                break
             case 'day':
-                date.setDate(day - 1)
-                return date
+                date.setDate(day + 1)
+                date.setHours(18)
+                date.setMinutes(0)
+                break
         }
+        date.setSeconds(15)
+        return breakTimestamp = date.valueOf() 
     }
 
-    function compareCache(type) {
-        if (!cache[0]) return null
-        const indicator = dataIndicator(type)
-        const indicatorDay = indicator.getDate()
-        const indicatorHour = indicator.getHours()
-        const indicatorMinutes = indicator.getMinutes()
-        const cacheDate = new Date(cache[cache.length - 1].earliest_timestamp)
-        const cacheDay = cacheDate.getDate()
-        const cacheHour = cacheDate.getHours()
-        const cacheMinutes = cacheDate.getMinutes()
-        switch (type) {
-            case 'quarter':
-                if (cacheDay === indicatorDay)
-                    if (cacheHour === indicatorHour)
-                        if (cacheMinutes === indicatorMinutes) {
-                            return cache
-                        }
-            case 'hour':
-                if (cacheDay === indicatorDay)
-                    if (cacheHour === indicatorHour) {
-                        return cache
-                    }
-            case 'day':
-                if (cacheDay === indicatorDay) {
-                    return cache
-                }
-        }
+    function compareCache() {
+        const nowTimestamp = Date.now()
+        if (nowTimestamp > breakTimestamp) return null
+        return cache
     }
     this.getData = function () {
         return data.concat
     }
     this.useCache = async function () {
-        let datas = compareCache(type)
+        let datas = compareCache()
         if (!datas) {
             datas = await fn(type)
             cache.splice(0, cache.length)
             datas.forEach(item => {
                 cache.push(item)
             })
+            updateBreakTimestamp(type)
         }
 
         return datas
